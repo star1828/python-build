@@ -1,4 +1,4 @@
-name: Build EXE from Python Script
+name: Python Build
 
 branding:
   icon: "package"
@@ -45,6 +45,8 @@ inputs:
   ### Control the inclusion of modules and packages in result. ###
   include-data-dir:
     description: 'Include data files from complete directory in the distribution. This is recursive. Check "--include-data-files" with patterns if you want non-recursive inclusion. An example would be "--include-data-dir=/path/some_dir=data/some_dir" for plain copy, of the whole directory. All files are copied, if you want to exclude files you need to remove them beforehand, or use "--noinclude-data-files" option to remove them. Default empty.'
+  nofollow-import-to:
+    description: 'nofollow-import-to'
   include-package:
     description: 'Include a whole package. Give as a Python namespace, e.g. "some_package.sub_package" and Nuitka will then find it and include it and all the modules found below that disk location in the binary or extension module it creates, and make it available for import by the code. To avoid unwanted sub packages, e.g. tests you can e.g. do this "--nofollow-import-to=*.tests". Default empty.'
   include-package-data:
@@ -162,6 +164,12 @@ runs:
           $data = ("${{ inputs.include-data-dir }}" -split '\s*,\s*')
           foreach ($datum in $data) {
             $args += @("--include-data-dir=$datum");
+          }
+        }
+        if ("${{ inputs.nofollow-import-to }}" -ne ''){
+          $data = ("${{ inputs.nofollow-import-to }}" -split '\s*,\s*')
+          foreach ($datum in $data) {
+            $args += @("--nofollow-import-to=$datum");
           }
         }
         if ("${{ inputs.include-package-data }}" -ne ''){
